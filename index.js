@@ -122,9 +122,34 @@ async function run() {
             res.send(result);
         })
 
+        app.get('/menu/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) };
+            const result = await menuCollection.findOne(query);
+            res.send(result);
+        })
+
         app.post('/menu', verifyToken, verifyAdmin, async (req, res) => {
             const recipe = req.body;
             const result = await menuCollection.insertOne(recipe);
+            res.send(result);
+        })
+
+        app.patch('/menu/:id', verifyToken, verifyAdmin, async (req, res) => {
+            const id = req.params.id;
+            const item = req.body;
+            const filter = { _id: new ObjectId(id) };
+            const updatedRecipe = {
+                $set: {
+                    name: item.name,
+                    recipe: item.recipe,
+                    image: item.image,
+                    category: item.category,
+                    price: item.price
+                },
+            };
+            console.log(item);
+            const result = await menuCollection.updateOne(filter, updatedRecipe);
             res.send(result);
         })
 
